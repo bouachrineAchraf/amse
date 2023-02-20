@@ -20,7 +20,7 @@ class SharedAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Navbar'),
+        // title: Text('My Navbar'),
         actions: <Widget>[
           TextButton(
             onPressed: () { Navigator.pushNamed(context, '/home');},
