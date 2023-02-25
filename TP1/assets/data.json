@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "nom": "Le Seigneur des anneaux : La Communauté de l'anneau",
+    "genre": "Fantasy",
+    "date_de_creation": "2001",
+    "image": "1.jpg",
+    "description": "Le jeune hobbit Frodon Sacquet hérite d'un anneau magique convoité par le maléfique Sauron. Il doit alors entreprendre une quête périlleuse pour le détruire et sauver le monde de la destruction. Avec l'aide d'un groupe hétéroclite d'alliés, Frodon doit traverser des paysages dangereux et affronter des ennemis redoutables pour atteindre son objectif."
+  },
+  {
+    "id": 2,
+    "nom": "La La Land",
+    "genre": "Comédie musicale",
+    "date_de_creation": "2016",
+    "image": "2.jpg",
+    "description": "Sebastian, un pianiste de jazz passionné, tombe amoureux de Mia, une actrice en herbe. Alors qu'ils poursuivent leurs rêves à Los Angeles, ils doivent faire face aux difficultés et aux sacrifices inhérents à leur art. Avec des numéros de danse et de musique époustouflants, La La Land est une déclaration d'amour à la ville des anges et à l'art qui la nourrit."
+  },
+  {
+    "id": 3,
+    "nom": "Pulp Fiction",
+    "genre": "Thriller",
+    "date_de_creation": "1994",
+    "image": "3.jpg",
+    "description": "Le film suit plusieurs histoires interconnectées impliquant des gangsters, des boxeurs, des tueurs à gages et des femmes fatales à Los Angeles. Avec un casting stellaire comprenant Samuel L. Jackson, John Travolta et Uma Thurman, Pulp Fiction est un classique du cinéma moderne qui a redéfini le genre du thriller."
+  }
+]
