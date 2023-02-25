@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
@@ -69,16 +70,145 @@ class SharedAppBar extends StatelessWidget implements PreferredSizeWidget {
 
 class HomePage extends StatelessWidget {
   @override
+//@override
   Widget build(BuildContext context) {
+    final List<MediaItem> images = [];
+    Future<List<MediaItem>> loadData() async {
+      final String jsonData = await rootBundle.loadString('data.json');
+      final List<dynamic> raw = json.decode(jsonData);
+      return raw.map((json) => MediaItem.fromJson(json)).toList();
+    }
+
+    final List<MediaItem> series = [];
+    Future<List<MediaItem>> loadSeries() async {
+      final String jsonData = await rootBundle.loadString('series.json');
+      final List<dynamic> raw = json.decode(jsonData);
+      return raw.map((json) => MediaItem.fromJson(json)).toList();
+    }
+
     return Scaffold(
-      appBar: SharedAppBar(),
-      body: Center(
-        child: Text('Home Page'),
-      ),
-    );
+        appBar: SharedAppBar(),
+        body: Column(
+          children: [
+            FutureBuilder<List<MediaItem>>(
+              future: loadData(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  images.addAll(snapshot.data!);
+                  return Center(
+                    child: CarouselSlider(
+                      options: CarouselOptions(
+                        height: 200,
+                        aspectRatio: 16 / 9,
+                        viewportFraction: 0.7,
+                        initialPage: 0,
+                        enableInfiniteScroll: true,
+                        reverse: false,
+                        autoPlay: true,
+                        autoPlayInterval: Duration(seconds: 3),
+                        autoPlayAnimationDuration: Duration(milliseconds: 800),
+                      ),
+                      items: images.map((data) {
+                        return Builder(
+                          builder: (BuildContext context) {
+                            return Container(
+                              width: MediaQuery.of(context).size.width,
+                              margin: EdgeInsets.symmetric(horizontal: 5.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment
+                                    .stretch, 
+                                children: [
+                                  Text(
+                                    data.title.toString(),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Image.asset(
+                                      '/movies/${data.imageUrl}',
+                                      //fit: BoxFit.contain,
+                                      //width : 100
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  );
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
+            ),
+            FutureBuilder<List<MediaItem>>(
+              future: loadSeries(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  series.addAll(snapshot.data!);
+                  return Center(
+                    child: CarouselSlider(
+                      options: CarouselOptions(
+                        height: 200,
+                        aspectRatio: 16 / 9,
+                        viewportFraction: 0.7,
+                        initialPage: 0,
+                        enableInfiniteScroll: true,
+                        reverse: false,
+                        autoPlay: true,
+                        autoPlayInterval: Duration(seconds: 3),
+                        autoPlayAnimationDuration: Duration(milliseconds: 800),
+                      ),
+                      items: series.map((data) {
+                        return Builder(
+                          builder: (BuildContext context) {
+                            return Container(
+                              width: MediaQuery.of(context).size.width,
+                              margin: EdgeInsets.symmetric(horizontal: 5.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment
+                                    .stretch, 
+                                children: [
+                                  Text(
+                                    data.title.toString(),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Image.asset(
+                                      '/series/${data.imageUrl}',
+                                      //fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  );
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
+            ),
+          ],
+        ));
   }
 }
-
 
 class MediasPage extends StatelessWidget {
   Future<List<MediaItem>> loadData() async {
@@ -112,7 +242,8 @@ class MediasPage extends StatelessWidget {
                             children: <Widget>[
                               Text(
                                 'Name: ${snapshot.data![index].title}',
-                                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), 
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
                                 textAlign: TextAlign.left,
                               ),
                               Text(
@@ -131,7 +262,7 @@ class MediasPage extends StatelessWidget {
                         Container(
                           width: 100,
                           height: 100,
-                          child: Image.asset(snapshot.data![index].imageUrl),
+                          child: Image.asset('/movies/${snapshot.data![index].imageUrl}'),
                         ),
                         Expanded(
                           child: Padding(
