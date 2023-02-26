@@ -115,8 +115,7 @@ class HomePage extends StatelessWidget {
                               width: MediaQuery.of(context).size.width,
                               margin: EdgeInsets.symmetric(horizontal: 5.0),
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment
-                                    .stretch, 
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
                                   Text(
                                     data.title.toString(),
@@ -173,8 +172,7 @@ class HomePage extends StatelessWidget {
                               width: MediaQuery.of(context).size.width,
                               margin: EdgeInsets.symmetric(horizontal: 5.0),
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment
-                                    .stretch, 
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
                                   Text(
                                     data.title.toString(),
@@ -207,6 +205,119 @@ class HomePage extends StatelessWidget {
             ),
           ],
         ));
+  }
+}
+
+// class MediasPage extends StatelessWidget {
+//   Future<List<MediaItem>> loadData() async {
+//     final String jsonData = await rootBundle.loadString('data.json');
+//     final List<dynamic> raw = json.decode(jsonData);
+//     return raw.map((json) => MediaItem.fromJson(json)).toList();
+//   }
+ 
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: SharedAppBar(),
+//       body: FutureBuilder<List<MediaItem>>(
+//         future: loadData(),
+//         builder:
+//             (BuildContext context, AsyncSnapshot<List<MediaItem>> snapshot) {
+//           if (snapshot.hasData) {
+//             return ListView.builder(
+//               padding: const EdgeInsets.all(8),
+//               itemCount: snapshot.data!.length,
+//               itemBuilder: (BuildContext context, int index) {
+//                 return GestureDetector(
+//                   onTap: () {
+//                     showModalBottomSheet(
+//                       context: context,
+//                       builder: (BuildContext context) {
+//                         return Container(
+//                           height: 200,
+//                           child: Column(
+//                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                             children: <Widget>[
+//                               Text(
+//                                 'Name: ${snapshot.data![index].title}',
+//                                 style: TextStyle(
+//                                     fontSize: 20, fontWeight: FontWeight.bold),
+//                                 textAlign: TextAlign.left,
+//                               ),
+//                               Text(
+//                                 'Description: ${snapshot.data![index].description}',
+//                                 style: TextStyle(fontSize: 16),
+//                               ),
+//                             ],
+//                           ),
+//                         );
+//                       },
+//                     );
+//                   },
+//                   child: Card(
+//                     child: Row(
+//                       children: <Widget>[
+//                         Container(
+//                           width: 100,
+//                           height: 100,
+//                           child: Image.asset(
+//                               '/movies/${snapshot.data![index].imageUrl}'),
+//                         ),
+//                         Expanded(
+//                           child: Padding(
+//                             padding: const EdgeInsets.all(8),
+//                             child: Text(snapshot.data![index].title),
+//                           ),
+//                         ),
+//                         IconButton(
+//                           icon: Icon(
+//                             Icons.favorite_border,
+//                            // color: ,
+//                           ),
+//                           onPressed: () {
+                              
+//                           },
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                 );
+//               },
+//             );
+//           } else if (snapshot.hasError) {
+//             return Center(child: Text('Failed to load media data'));
+//           } else {
+//             return Center(child: CircularProgressIndicator());
+//           }
+//         },
+//       ),
+//     );
+//   }
+// }
+
+class CustomIconButton extends StatefulWidget {
+  @override
+  _CustomIconButtonState createState() => _CustomIconButtonState();
+}
+
+class _CustomIconButtonState extends State<CustomIconButton> {
+  Color _buttonColor = Colors.grey;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: Icon(
+        Icons.favorite,
+        
+      ),
+      color: _buttonColor,
+      onPressed: () {
+        setState(() {
+          _buttonColor = Colors.red;
+        });
+      },
+    );
   }
 }
 
@@ -262,7 +373,8 @@ class MediasPage extends StatelessWidget {
                         Container(
                           width: 100,
                           height: 100,
-                          child: Image.asset('/movies/${snapshot.data![index].imageUrl}'),
+                          child: Image.asset(
+                              '/movies/${snapshot.data![index].imageUrl}'),
                         ),
                         Expanded(
                           child: Padding(
@@ -270,6 +382,7 @@ class MediasPage extends StatelessWidget {
                             child: Text(snapshot.data![index].title),
                           ),
                         ),
+                        CustomIconButton(),
                       ],
                     ),
                   ),
