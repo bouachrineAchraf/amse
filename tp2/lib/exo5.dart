@@ -10,7 +10,9 @@ class DisplayImageWidget extends StatelessWidget {
           title: Text('Display image'),
         ),
         // body: Center(child: Image.network("https://picsum.photos/1024")));
-        body: GridView.count(
+        body:
+        //Image.network('https://picsum.photos/512', fit: BoxFit.cover))
+        GridView.count(
           primary: false,
           padding: const EdgeInsets.all(20),
           crossAxisSpacing: 3,

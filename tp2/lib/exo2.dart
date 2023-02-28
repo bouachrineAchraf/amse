@@ -1,176 +1,104 @@
 import 'package:flutter/material.dart';
-// import 'package:Taquin/util.dart';
 import 'dart:math';
 
-class SliderApp extends StatelessWidget {
-  const SliderApp({super.key});
+class DisplayImageWidget extends StatefulWidget {
+  const DisplayImageWidget({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: SliderExample(),
-    );
-  }
+  State<DisplayImageWidget> createState() => _DisplayImageWidgetState();
 }
 
-class SliderExample extends StatefulWidget {
-  const SliderExample({super.key});
-
-  @override
-  State<SliderExample> createState() => _SliderExampleState();
-}
-
-class _SliderExampleState extends State<SliderExample> {
-  double _currentSliderPrimaryValue = 0;
-  double _currentSliderSecondaryValue = 0;
-  double _currentSliderthirdValue = 1;
+class _DisplayImageWidgetState extends State<DisplayImageWidget> {
+  double _currentRotateXValue = 0;
+  double _currentRotateZValue = 0;
+  double _currentScaleValue = 1;
+  bool isChecked = false;
+  bool isAnimating = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Slider')),
+      appBar: AppBar(
+        title: const Text('Exo 2 : Transformer une image'),
+      ),
       body: Column(
-        // mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-           Transform.scale(
-            scale: _currentSliderthirdValue),
-          // Container(
-          //   clipBehavior: Clip.hardEdge,
-          //   decoration: BoxDecoration(color: Colors.white),
-          //   //color: Colors.black,
-          //   // Transform.scale(
-          // //   scale: _currentSliderthirdValue,
-          //   child: 
-          //   // Transform.scale(
-          // //   scale: _currentSliderthirdValue,
-          //   Transform(
-          //     //alignment: Alignment.topRight,
-          //     transform: Matrix4.identity()
-          //       ..rotateZ(_currentSliderSecondaryValue)
-          //       ..rotateX(_currentSliderPrimaryValue),
-          //      // ..rotateY(_currentSliderthirdValue),
-          //     child: Container(
-          //      // padding: const EdgeInsets.all(8.0),
-          //       //color: const Color(0xFFE8581C),
-                
-          //       child: Image(
-          //         image: NetworkImage('https://picsum.photos/512/1024'),
-          //         width: 100,
-          //         height: 150,
-          //       ),
-          //     ),
-          //   ),
-          // ),
-          Transform.scale(
-            scale: _currentSliderthirdValue,
-            child: Transform.rotate(
-              angle: _currentSliderPrimaryValue,
-              child: Transform.rotate(
-                angle: _currentSliderSecondaryValue,
-                child: Container(
-                  padding: const EdgeInsets.all(8.0),
-                  color: const Color(0xFFE8581C),
-                  child: Image(
-                    image: NetworkImage('https://picsum.photos/512/1024'),
-                    width: 100,
-                    height: 150,
-                  ),
-                ),
-              ),
+          Container(
+            clipBehavior: Clip.hardEdge,
+            decoration: const BoxDecoration(color: Colors.white),
+            child: Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.identity()
+                ..rotateX(_currentRotateXValue)
+                ..rotateZ(_currentRotateZValue)
+                ..rotateY(isChecked ? -pi : 0)
+                ..scale(_currentScaleValue),
+              child: Image.network('https://picsum.photos/200'),
             ),
           ),
-          Slider(
-            value: _currentSliderPrimaryValue,
-            max: 2 * pi,
-            label: _currentSliderPrimaryValue.round().toString(),
-            onChanged: (double value) {
-              setState(() {
-                _currentSliderPrimaryValue = value;
-              });
-            },
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text('RotateX:'),
+              Slider(
+                value: _currentRotateXValue,
+                max: 2 * pi,
+                onChanged: (double value) {
+                  setState(() {
+                    _currentRotateXValue = value;
+                  });
+                },
+              ),
+            ],
           ),
-          Slider(
-            value: _currentSliderSecondaryValue,
-            max: 2 * pi,
-            label: _currentSliderSecondaryValue.round().toString(),
-            onChanged: (double value) {
-              setState(() {
-                _currentSliderSecondaryValue = value;
-              });
-            },
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text('RotateZ:'),
+              Slider(
+                value: _currentRotateZValue,
+                max: 2 * pi,
+                onChanged: (double value) {
+                  setState(() {
+                    _currentRotateZValue = value;
+                  });
+                },
+              ),
+            ],
           ),
-          Slider(
-            value: _currentSliderthirdValue,
-            max: 10,
-            label: _currentSliderthirdValue.round().toString(),
-            onChanged: (double value) {
-              setState(() {
-                _currentSliderthirdValue = value;
-              });
-            },
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text('Mirror:'),
+              Checkbox(
+                checkColor: Colors.white,
+                value: isChecked,
+                onChanged: (bool? value) {
+                  setState(() {
+                    isChecked = value!;
+                  });
+                },
+              )
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text('Scale:'),
+              Slider(
+                value: _currentScaleValue,
+                max: 2,
+                onChanged: (double value) {
+                  setState(() {
+                    _currentScaleValue = value;
+                  });
+                },
+              ),
+            ],
           ),
         ],
       ),
     );
   }
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     appBar: AppBar(title: const Text('Slider')),
-  //     body: Column(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       children: <Widget>[
-
-  //         Transform.rotate(
-  //           angle: _currentSliderPrimaryValue,
-  //           child: Container(
-  //             padding: const EdgeInsets.all(8.0),
-  //             color: const Color(0xFFE8581C),
-  //             child: Image(
-  //             image: NetworkImage('https://picsum.photos/512/1024'),
-  //             width: 200,
-  //             height: 300,
-  //             ),
-  //           ),
-  //         ),
-
-  //         Transform.scale(
-  //           scale: _currentSliderSecondaryValue,
-  //           child: Container(
-  //             padding: const EdgeInsets.all(8.0),
-  //             color: const Color(0xFFE8581C),
-  //             child: Image(
-  //             image: NetworkImage('https://picsum.photos/512/1024'),
-  //             width: 20,
-  //             height: 30,
-  //             ),
-  //           ),
-  //         ),
-
-  //         Slider(
-  //           value: _currentSliderPrimaryValue,
-  //           max: 2 * pi,
-  //           //min: 0,
-  //           //rsecondaryTrackValue: _currentSliderSecondaryValue,
-  //           label: _currentSliderPrimaryValue.round().toString(),
-  //           onChanged: (double value) {
-  //             setState(() {
-  //               _currentSliderPrimaryValue = value;
-  //             });
-  //           },
-  //         ),
-  //         Slider(
-  //           value: _currentSliderSecondaryValue,
-  //           max: 3,
-  //           //min: 0,
-  //           label: _currentSliderSecondaryValue.round().toString(),
-  //           onChanged: (double value) {
-  //             setState(() {
-  //               _currentSliderSecondaryValue = value;
-  //             });
-  //           },
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 }
