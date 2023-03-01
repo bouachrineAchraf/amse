@@ -56,7 +56,7 @@ List exos = [
   Exo(
       title: 'Exercice 6b',
       subtitle: 'Génération du plateau de tuiles',
-      buildFunc: (context) => exo6b.PositionedTiles()),
+      buildFunc: (context) => exo6b.MyGridView()),
 ];
 
 class MenuPage extends StatelessWidget {

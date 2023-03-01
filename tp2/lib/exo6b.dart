@@ -1,81 +1,153 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-// ==============
-// Models
-// ==============
-
-math.Random random = new math.Random();
-
-class Tile {
-  int index;
-
-  Tile(this.index);
-  // Tile.randomColor() {
-  //   this.color = Color.fromARGB(
-  //       255, random.nextInt(255), random.nextInt(255), random.nextInt(255));
-  // }
+class MyGridView extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => MyGridViewState();
 }
 
-// ==============
-// Widgets
-// ==============
-
-class TileWidget extends StatelessWidget {
-  final Tile tile;
-
-  TileWidget(this.tile);
+class MyGridViewState extends State<MyGridView> {
+  int gridSize = 3;
+  List<String> tileValues = [];
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(8),
-      color: Colors.teal[100],
-      child: Center(
-        child: Text(
-          'tile ${tile.index}',
-          style: TextStyle(fontSize: 18),
-        ),
-      ),
-    );
+  void initState() {
+    super.initState();
+    generateTileValues();
   }
+
+  void generateTileValues() {
+    tileValues.clear();
+    int totalTiles = gridSize * gridSize;
+    for (int i = 0; i < totalTiles; i++) {
+      tileValues.add(i == 0 ? '' : i.toString());
+    }
+  }
+
+ void swapTile(int index) {
+  int emptyIndex = tileValues.lastIndexOf('');
+  int previousIndex = index - 1;
+  int nextIndex = index + 1;
+  int previousRow = index - gridSize;
+  int nextRow = index + gridSize;
+
+  List<int> adjacentIndexes = [];
+
+  // Determine the adjacent tile indexes
+  if (previousIndex >= 0 && index % gridSize != 0) {
+    adjacentIndexes.add(previousIndex);
+  }
+  if (nextIndex < tileValues.length && (index + 1) % gridSize != 0) {
+    adjacentIndexes.add(nextIndex);
+  }
+  if (previousRow >= 0) {
+    adjacentIndexes.add(previousRow);
+  }
+  if (nextRow < tileValues.length) {
+    adjacentIndexes.add(nextRow);
+  }
+
+  if (adjacentIndexes.contains(emptyIndex)) {
+    tileValues[emptyIndex] = tileValues[index];
+    tileValues[index] = '';
+  }
+
+  setState(() {});
 }
-
-void main() => runApp(new MaterialApp(home: PositionedTiles()));
-
-class PositionedTiles extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => PositionedTilesState();
-}
-
-class PositionedTilesState extends State<PositionedTiles> {
-  List<Widget> tiles =
-      List<Widget>.generate(16, (index) => TileWidget(Tile(index)));
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Moving Tiles'),
-        centerTitle: true,
+        title: const Text('Color Grid Widget'),
       ),
-      body: GridView.count(
-        primary: false,
-        padding: const EdgeInsets.all(20),
-        crossAxisSpacing: 4,
-        mainAxisSpacing: 4,
-        crossAxisCount: 4,
-        children: tiles,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AspectRatio(
+              aspectRatio: 1,
+              child: GridView.count(
+                crossAxisCount: gridSize,
+                children: [
+                  for (int i = 0; i < tileValues.length; i++)
+                    InkWell(
+                      onTap: () {
+                        swapTile(i);
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: tileValues[i].isEmpty
+                              ? Colors.white
+                              : Color.fromARGB(255, 153, 161, 168),
+                          border: getAdjacentTiles(i).contains(tileValues.lastIndexOf('')) ? Border.all(color: Colors.red, width: 2) : null,
+                        ),
+                        child: Center(
+                          child: Text(
+                            tileValues[i].isEmpty
+                                ? 'empty 0'
+                                : 'Tile ${tileValues[i]}',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 40),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('Size'),
+                const SizedBox(width: 20),
+                Expanded(
+                  child: Slider(
+                    min: 3,
+                    max: 8,
+                    divisions: 6,
+                    value: gridSize.toDouble(),
+                    onChanged: (double value) {
+                      setState(() {
+                        gridSize = value.toInt();
+                        generateTileValues();
+                      });
+                    },
+                  ),
+                ),
+                Text('$gridSize x $gridSize'),
+              ],
+            ),
+          ],
+        ),
       ),
-      floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.sentiment_very_satisfied), onPressed: swapTiles),
     );
   }
 
-  swapTiles() {
-    setState(() {
-      //print(tiles);
-      tiles.insert(1, tiles.removeAt(0));
-    });
+  List<int> getAdjacentTiles(int index) {
+    int emptyIndex = tileValues.lastIndexOf('');
+    int previousIndex = index - 1;
+    int nextIndex = index + 1;
+    int previousRow = index - gridSize;
+    int nextRow = index + gridSize;
+    List<int> adjacentTiles = [];
+    if (emptyIndex == previousIndex) {
+      adjacentTiles.add(index);
+      adjacentTiles.add(previousIndex);
+    } else if (emptyIndex == nextIndex) {
+      adjacentTiles.add(index);
+      adjacentTiles.add(nextIndex);
+    } else if (emptyIndex == previousRow) {
+      adjacentTiles.add(index);
+      adjacentTiles.add(previousRow);
+    } else if (emptyIndex == nextRow) {
+      adjacentTiles.add(index);
+      adjacentTiles.add(nextRow);
+    }
+    return adjacentTiles;
   }
 }
