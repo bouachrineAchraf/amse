@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import 'exo1.dart' as exo1;
 import 'exo2.dart' as exo2;
+import 'exo2b.dart' as exo2b;
 import 'exo4.dart' as exo4;
 import 'exo5.dart' as exo5;
 import 'exo5b.dart' as exo5b;
+import 'exo5c.dart' as exo5c;
 import 'exo6.dart' as exo6;
 import 'exo6b.dart' as exo6b;
 import 'exo7.dart' as exo7;
@@ -39,6 +41,10 @@ List exos = [
       subtitle: 'Rotate&Scale image',
       buildFunc: (context) => exo2.DisplayImageWidget()),
   Exo(
+      title: 'Exercice 2b',
+      subtitle: 'Rotate&Scale image with animation',
+      buildFunc: (context) => exo2b.DisplayImageWidget()),
+  Exo(
       title: 'Exercice 4',
       subtitle: 'Affichage d une tuile',
       buildFunc: (context) => exo4.DisplayTileWidget()),
@@ -50,6 +56,10 @@ List exos = [
       title: 'Exercice 5b',
       subtitle: 'Génération du plateau de tuiles',
       buildFunc: (context) => exo5b.DisplayImageWidget()),
+Exo(
+      title: 'Exercice 5c',
+      subtitle: 'Génération du plateau de tuiles',
+      buildFunc: (context) => exo5c.DisplayImageWidget()),
   Exo(
       title: 'Exercice 6',
       subtitle: 'Génération du plateau de tuiles',

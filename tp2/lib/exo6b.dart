@@ -80,7 +80,7 @@ class MyGridViewState extends State<MyGridView> {
                         decoration: BoxDecoration(
                           color: tileValues[i].isEmpty
                               ? Colors.white
-                              : Color.fromARGB(255, 153, 161, 168),
+                              : Color.fromARGB(255, 34, 110, 177),
                           border: getAdjacentTiles(i).contains(tileValues.lastIndexOf('')) ? Border.all(color: Colors.red, width: 2) : null,
                         ),
                         child: Center(
