@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/home': (context) => HomePage(),
         '/medias': (context) => MediasPage(),
-        '/favorits': (context) => FavoritsPage(),
+        '/favorits': (context) => FavoritsPage(favoritedMediaItems: favoriteMediaItems),
       },
     );
   }
@@ -208,95 +208,12 @@ class HomePage extends StatelessWidget {
   }
 }
 
-// class MediasPage extends StatelessWidget {
-//   Future<List<MediaItem>> loadData() async {
-//     final String jsonData = await rootBundle.loadString('data.json');
-//     final List<dynamic> raw = json.decode(jsonData);
-//     return raw.map((json) => MediaItem.fromJson(json)).toList();
-//   }
- 
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: SharedAppBar(),
-//       body: FutureBuilder<List<MediaItem>>(
-//         future: loadData(),
-//         builder:
-//             (BuildContext context, AsyncSnapshot<List<MediaItem>> snapshot) {
-//           if (snapshot.hasData) {
-//             return ListView.builder(
-//               padding: const EdgeInsets.all(8),
-//               itemCount: snapshot.data!.length,
-//               itemBuilder: (BuildContext context, int index) {
-//                 return GestureDetector(
-//                   onTap: () {
-//                     showModalBottomSheet(
-//                       context: context,
-//                       builder: (BuildContext context) {
-//                         return Container(
-//                           height: 200,
-//                           child: Column(
-//                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                             children: <Widget>[
-//                               Text(
-//                                 'Name: ${snapshot.data![index].title}',
-//                                 style: TextStyle(
-//                                     fontSize: 20, fontWeight: FontWeight.bold),
-//                                 textAlign: TextAlign.left,
-//                               ),
-//                               Text(
-//                                 'Description: ${snapshot.data![index].description}',
-//                                 style: TextStyle(fontSize: 16),
-//                               ),
-//                             ],
-//                           ),
-//                         );
-//                       },
-//                     );
-//                   },
-//                   child: Card(
-//                     child: Row(
-//                       children: <Widget>[
-//                         Container(
-//                           width: 100,
-//                           height: 100,
-//                           child: Image.asset(
-//                               '/movies/${snapshot.data![index].imageUrl}'),
-//                         ),
-//                         Expanded(
-//                           child: Padding(
-//                             padding: const EdgeInsets.all(8),
-//                             child: Text(snapshot.data![index].title),
-//                           ),
-//                         ),
-//                         IconButton(
-//                           icon: Icon(
-//                             Icons.favorite_border,
-//                            // color: ,
-//                           ),
-//                           onPressed: () {
-                              
-//                           },
-//                         ),
-//                       ],
-//                     ),
-//                   ),
-//                 );
-//               },
-//             );
-//           } else if (snapshot.hasError) {
-//             return Center(child: Text('Failed to load media data'));
-//           } else {
-//             return Center(child: CircularProgressIndicator());
-//           }
-//         },
-//       ),
-//     );
-//   }
-// }
 
 class CustomIconButton extends StatefulWidget {
+  final MediaItem mediaItem;
+
+  CustomIconButton({required this.mediaItem});
+
   @override
   _CustomIconButtonState createState() => _CustomIconButtonState();
 }
@@ -316,9 +233,25 @@ class _CustomIconButtonState extends State<CustomIconButton> {
         setState(() {
           _buttonColor = Colors.red;
         });
+print('Liked ${widget.mediaItem.title}');
+        // Add media item to favorites
+        addToFavorites(widget.mediaItem);
+
+        // Navigate to favorites page
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(builder: (context) => FavoritsPage(favoritedMediaItems: [],)),
+        // );
       },
     );
   }
+}
+
+// Define a list to store the favorite media items
+List<MediaItem> favoriteMediaItems = [];
+
+void addToFavorites(MediaItem mediaItem) {
+  favoriteMediaItems.add(mediaItem);
 }
 
 class MediasPage extends StatelessWidget {
@@ -382,7 +315,7 @@ class MediasPage extends StatelessWidget {
                             child: Text(snapshot.data![index].title),
                           ),
                         ),
-                        CustomIconButton(),
+                        CustomIconButton(mediaItem: snapshot.data![index]),
                       ],
                     ),
                   ),
@@ -417,14 +350,44 @@ class MediaItem {
   }
 }
 
-class FavoritsPage extends StatelessWidget {
+class FavoritsPage extends StatefulWidget {
+  final List<MediaItem> favoritedMediaItems;
+
+  FavoritsPage({required this.favoritedMediaItems});
+
+  @override
+  _FavoritsPageState createState() => _FavoritsPageState();
+}
+
+class _FavoritsPageState extends State<FavoritsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SharedAppBar(),
-      body: Center(
-        child: Text('Favories Page'),
+      appBar: AppBar(
+        title: Text('Favorites'),
       ),
+      body: widget.favoritedMediaItems.isEmpty
+          ? Center(
+              child: Text('No favorites yet.'),
+            )
+          : ListView.builder(
+              itemCount: widget.favoritedMediaItems.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Card(
+                  child: ListTile(
+                    leading: Image.asset(
+                      '/movies/${widget.favoritedMediaItems[index].imageUrl}',
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    title: Text(widget.favoritedMediaItems[index].title),
+                    subtitle: Text(widget.favoritedMediaItems[index].description),
+                  ),
+                );
+              },
+            ),
     );
   }
 }
+
