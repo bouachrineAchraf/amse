@@ -4,7 +4,7 @@
     "nom": "Breaking Bad",
     "genre": "Drama",
     "date_de_creation": "2008",
-    "image": "1.jpg",
+    "image": "/series/1.jpg",
     "description": "A high school chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing and selling methamphetamine in order to secure his family's future."
   },
   {
@@ -12,7 +12,7 @@
     "nom": "La Casa de Papel",
     "genre": "Crime, Thriller",
     "date_de_creation": "2017",
-    "image": "2.jpg",
+    "image": "/series/2.jpg",
     "description": "Eight robbers take hostages and lock themselves in the Royal Mint of Spain as a criminal mastermind manipulates the police to carry out his plan."
   },
   {
@@ -20,7 +20,7 @@
     "nom": "Prison Break",
     "genre": "Action, Drama",
     "date_de_creation": "2005",
-    "image": "3.jpg",
+    "image": "/series/3.jpg",
     "description": "Due to a political conspiracy, an innocent man is sent to death row and his only hope is his brother, who makes it his mission to deliberately get himself sent to the same prison in order to break the both of them out, from the inside."
   }
 ]
