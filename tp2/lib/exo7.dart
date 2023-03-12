@@ -1,164 +1,181 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 
-class MyGridView extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => MyGridViewState();
+class Tile {
+  int number;
+  Tile(this.number);
 }
 
-class MyGridViewState extends State<MyGridView> {
-  int gridSize = 3;
-  List<String> tileValues = [];
+class TileWidget extends StatelessWidget {
+  final Tile tile;
+
+  TileWidget(this.tile);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(
+        'Tile ${tile.number}',
+        style: const TextStyle(color: Color.fromARGB(255, 59, 48, 48)),
+      ),
+    );
+  }
+}
+
+class DisplayGridView extends StatefulWidget {
+  @override
+  DisplayGridViewState createState() => DisplayGridViewState();
+}
+
+class DisplayGridViewState extends State<DisplayGridView> {
+  int gridSize = 4;
+  static int EmptySpot = 1;
+  List<Widget>? _items;
+  bool _gameStarted = false;
+
+  int counter = 0;
 
   @override
   void initState() {
     super.initState();
-    generateTileValues();
+    gridSize = 4;
+    _items = List.generate(100, (index) => TileWidget(Tile(index)));
+
+    counter = 0;
   }
 
-  void generateTileValues() {
-    tileValues.clear();
-    int totalTiles = gridSize * gridSize;
-    for (int i = 0; i < totalTiles; i++) {
-      tileValues.add(i == 0 ? '' : i.toString());
-    }
-  }
-
-  void swapTile(int index) {
-    int emptyIndex = tileValues.lastIndexOf('');
-    int previousIndex = index - 1;
-    int nextIndex = index + 1;
-    int previousRow = index - gridSize;
-    int nextRow = index + gridSize;
-
-    List<int> adjacentIndexes = [];
-
-    // Determine the adjacent tile indexes
-    if (previousIndex >= 0 && index % gridSize != 0) {
-      adjacentIndexes.add(previousIndex);
-    }
-    if (nextIndex < tileValues.length && (index + 1) % gridSize != 0) {
-      adjacentIndexes.add(nextIndex);
-    }
-    if (previousRow >= 0) {
-      adjacentIndexes.add(previousRow);
-    }
-    if (nextRow < tileValues.length) {
-      adjacentIndexes.add(nextRow);
-    }
-
-    if (adjacentIndexes.contains(emptyIndex)) {
-      tileValues[emptyIndex] = tileValues[index];
-      tileValues[index] = '';
-    }
-
-    setState(() {});
+  bool _changeIndex(int index) {
+    return ((EmptySpot != index) &&
+        (((EmptySpot % gridSize != 0) && (index + 1 == EmptySpot)) ||
+            (((EmptySpot + 1) % gridSize != 0) && (index - 1 == EmptySpot)) ||
+            (((EmptySpot + gridSize >= 0) &&
+                (index + gridSize == EmptySpot))) ||
+            (((EmptySpot + gridSize < pow(gridSize, 2)) &&
+                (index - gridSize == EmptySpot)))));
   }
 
   @override
   Widget build(BuildContext context) {
-    List<int> getAdjacentTiles(int index) {
-      int emptyIndex = tileValues.lastIndexOf('');
-      int previousIndex = index - 1;
-      int nextIndex = index + 1;
-      int previousRow = index - gridSize;
-      int nextRow = index + gridSize;
-      List<int> adjacentTiles = [];
-      if (emptyIndex == previousIndex) {
-        adjacentTiles.add(index);
-        adjacentTiles.add(previousIndex);
-      } else if (emptyIndex == nextIndex) {
-        adjacentTiles.add(index);
-        adjacentTiles.add(nextIndex);
-      } else if (emptyIndex == previousRow) {
-        adjacentTiles.add(index);
-        adjacentTiles.add(previousRow);
-      } else if (emptyIndex == nextRow) {
-        adjacentTiles.add(index);
-        adjacentTiles.add(nextRow);
-      }
-      return adjacentTiles;
-    }
-
+    double tileSize = MediaQuery.of(context).size.width / gridSize;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Color Grid Widget'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AspectRatio(
-              aspectRatio: 1,
-              child: GridView.count(
-                crossAxisCount: gridSize,
-                children: [
-                  for (int i = 0; i < tileValues.length; i++)
-                    InkWell(
-                      onTap: () {
-                        swapTile(i);
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          color: tileValues[i].isEmpty
-                              ? Colors.white
-                              : Color.fromARGB(255, 153, 161, 168),
-                          border: getAdjacentTiles(i)
-                                  .contains(tileValues.lastIndexOf(''))
-                              ? Border.all(color: Colors.red, width: 2)
-                              : null,
-                        ),
-                        child: Center(
-                          child: Text(
-                            tileValues[i].isEmpty
-                                ? 'empty 0'
-                                : 'Tile ${tileValues[i]}',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 40),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      if (gridSize > 3) {
-                        gridSize--;
-                        generateTileValues();
-                      }
-                    });
-                  },
-                  child: const Text('-'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      if (gridSize < 8) {
-                        gridSize++;
-                        generateTileValues();
-                      }
-                    });
-                  },
-                  child: const Text('+'),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+        title:
+Text('Jeu de Taquin'),
+centerTitle: true,
+),
+body: Column(
+mainAxisAlignment: MainAxisAlignment.center,
+crossAxisAlignment: CrossAxisAlignment.center,
+children: <Widget>[
+Expanded(
+child: GridView.count(
+crossAxisCount: gridSize,
+children: _items!
+.asMap()
+.entries
+.map(
+(entry) => GestureDetector(
+onTap: () {
+if (_gameStarted) {
+int index = entry.key;
+if (_changeIndex(index)) {
+setState(() {
+Widget temp = _items![index];
+_items![index] = _items![EmptySpot];
+_items![EmptySpot] = temp;
+EmptySpot = index;
+counter++;
+if (_checkWin()) {
+showDialog(
+context: context,
+builder: (BuildContext context) {
+return AlertDialog(
+title: Text('You Won!'),
+content: Text(
+'Congratulations! You completed the puzzle in $counter moves.'),
+actions: <Widget>[
+TextButton(
+child: Text('Close'),
+onPressed: () {
+Navigator.of(context).pop();
+},
+),
+],
+);
+},
+);
+}
+});
+}
+} else {
+ScaffoldMessenger.of(context).showSnackBar(
+SnackBar(
+content: Text('Please click on Start Game'),
+),
+);
+}
+},
+child: Container(
+color: Colors.white,
+child: Center(
+child: SizedBox(
+width: tileSize,
+height: tileSize,
+child: entry.value,
+),
+),
+),
+),
+)
+.toList(),
+),
+),
+Row(
+mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+children: [
+ElevatedButton(
+onPressed: () {
+setState(() {
+_gameStarted = true;
+_items!.shuffle();
+EmptySpot = _items!.indexWhere((widget) =>
+widget is TileWidget &&
+widget.tile.number == _items!.length - 1);
+counter = 0;
+});
+},
+child: Text('Start Game'),
+),
+ElevatedButton(
+onPressed: () {
+setState(() {
+_gameStarted = false;
+_items!.sort((a, b) => a is TileWidget && b is TileWidget
+? a.tile.number.compareTo(b.tile.number)
+: 0);
+EmptySpot = 0;
+counter = 0;
+});
+},
+child: Text('Reset Game'),
+),
+],
+),
+SizedBox(height: 20.0),
+],
+),
+);
+}
+
+bool _checkWin() {
+for (int i = 0; i < _items!.length; i++) {
+if (_items![i] is TileWidget) {
+TileWidget tileWidget = _items![i] as TileWidget;
+if (tileWidget.tile.number != i) {
+return false;
+}
+}
+}
+return true;
+}
 }

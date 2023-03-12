@@ -1,153 +1,141 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
 
-class MyGridView extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => MyGridViewState();
+class Tile {
+  int number;
+  Tile(this.number);
 }
 
-class MyGridViewState extends State<MyGridView> {
-  int gridSize = 3;
-  List<String> tileValues = [];
+class TileWidget extends StatelessWidget {
+  final Tile tile;
+
+  TileWidget(this.tile);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(
+        'Tile ${tile.number}',
+        style: const TextStyle(color: Color.fromARGB(255, 59, 48, 48)),
+      ),
+    );
+  }
+}
+
+class DisplayGridView extends StatefulWidget {
+  @override
+  DisplayGridViewState createState() => DisplayGridViewState();
+}
+
+class DisplayGridViewState extends State<DisplayGridView> {
+  int gridSize = 4;
+  static int EmptySpot = 1;
+  List<Widget>? _items;
+
+  int counter = 0;
 
   @override
   void initState() {
     super.initState();
-    generateTileValues();
+    gridSize = 4;
+    _items = List.generate(100, (index) => TileWidget(Tile(index)));
+
+    counter = 0;
   }
 
-  void generateTileValues() {
-    tileValues.clear();
-    int totalTiles = gridSize * gridSize;
-    for (int i = 0; i < totalTiles; i++) {
-      tileValues.add(i == 0 ? '' : i.toString());
-    }
+  bool _ChangeIndex(int index) {
+    return ((EmptySpot != index) &&
+        (((EmptySpot % gridSize != 0) && (index + 1 == EmptySpot)) ||
+            (((EmptySpot + 1) % gridSize != 0) && (index - 1 == EmptySpot)) ||
+            (((EmptySpot + gridSize >= 0) &&
+                (index + gridSize == EmptySpot))) ||
+            (((EmptySpot + gridSize < pow(gridSize, 2)) &&
+                (index - gridSize == EmptySpot)))));
   }
-
- void swapTile(int index) {
-  int emptyIndex = tileValues.lastIndexOf('');
-  int previousIndex = index - 1;
-  int nextIndex = index + 1;
-  int previousRow = index - gridSize;
-  int nextRow = index + gridSize;
-
-  List<int> adjacentIndexes = [];
-
-  // Determine the adjacent tile indexes
-  if (previousIndex >= 0 && index % gridSize != 0) {
-    adjacentIndexes.add(previousIndex);
-  }
-  if (nextIndex < tileValues.length && (index + 1) % gridSize != 0) {
-    adjacentIndexes.add(nextIndex);
-  }
-  if (previousRow >= 0) {
-    adjacentIndexes.add(previousRow);
-  }
-  if (nextRow < tileValues.length) {
-    adjacentIndexes.add(nextRow);
-  }
-
-  if (adjacentIndexes.contains(emptyIndex)) {
-    tileValues[emptyIndex] = tileValues[index];
-    tileValues[index] = '';
-  }
-
-  setState(() {});
-}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Color Grid Widget'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AspectRatio(
-              aspectRatio: 1,
-              child: GridView.count(
-                crossAxisCount: gridSize,
+        body: Material(
+            type: MaterialType.transparency,
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  for (int i = 0; i < tileValues.length; i++)
-                    InkWell(
-                      onTap: () {
-                        swapTile(i);
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          color: tileValues[i].isEmpty
-                              ? Colors.white
-                              : Color.fromARGB(255, 34, 110, 177),
-                          border: getAdjacentTiles(i).contains(tileValues.lastIndexOf('')) ? Border.all(color: Colors.red, width: 2) : null,
-                        ),
-                        child: Center(
-                          child: Text(
-                            tileValues[i].isEmpty
-                                ? 'empty 0'
-                                : 'Tile ${tileValues[i]}',
-                            style: const TextStyle(
-                              fontSize: 14,
+                  SizedBox(
+                      height: 480, // constrain height
+                      child: GridView.count(
+                        primary: false,
+                        padding: const EdgeInsets.fromLTRB(10,10,10,10),
+                        crossAxisSpacing: 3,
+                        mainAxisSpacing: 2,
+                        crossAxisCount: gridSize,
+                        children: List.generate(
+                            pow(gridSize, 2).toInt(),
+                            (index) => InkWell(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: EmptySpot == index
+                                        ? Colors.white
+                                        : Color.fromARGB(255, 138, 140, 142),
+                                    border: Border.all(
+                                      color: EmptySpot == index
+                                          ? Colors.transparent
+                                          : _ChangeIndex(index)
+                                              ? Color.fromARGB(255, 132, 74, 70)
+                                              : Colors.transparent,
+                                      width: 5,
+                                    ),
+                                  ),
+                                  child: index == EmptySpot
+                                      ? SizedBox(
+                                          width: 0,
+                                          height: 0,
+                                        )
+                                      : _items![index],
+                                ),
+                                onTap: () {
+                                  swapTiles(index);
+                                })),
+                      )),
+                  Center(
+                      child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('Size',
+                          style: TextStyle(
+                              fontSize: 15,
                               color: Colors.black,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 40),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('Size'),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: Slider(
-                    min: 3,
-                    max: 8,
-                    divisions: 6,
-                    value: gridSize.toDouble(),
-                    onChanged: (double value) {
-                      setState(() {
-                        gridSize = value.toInt();
-                        generateTileValues();
-                      });
-                    },
-                  ),
-                ),
-                Text('$gridSize x $gridSize'),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+                              fontWeight: FontWeight.bold)),
+                      const SizedBox(width: 20),
+                      Expanded(
+                          child: Slider(
+                        value: gridSize.toDouble(),
+                        min: 3,
+                        max: 8,
+                        onChanged: (newValue) {
+                          setState(() {
+                            gridSize = newValue.round();
+                          });
+                        },
+                        divisions: 7,
+                        label: gridSize.toString(),
+                      ))
+                    ],
+                  )),
+                ])));
   }
 
-  List<int> getAdjacentTiles(int index) {
-    int emptyIndex = tileValues.lastIndexOf('');
-    int previousIndex = index - 1;
-    int nextIndex = index + 1;
-    int previousRow = index - gridSize;
-    int nextRow = index + gridSize;
-    List<int> adjacentTiles = [];
-    if (emptyIndex == previousIndex) {
-      adjacentTiles.add(index);
-      adjacentTiles.add(previousIndex);
-    } else if (emptyIndex == nextIndex) {
-      adjacentTiles.add(index);
-      adjacentTiles.add(nextIndex);
-    } else if (emptyIndex == previousRow) {
-      adjacentTiles.add(index);
-      adjacentTiles.add(previousRow);
-    } else if (emptyIndex == nextRow) {
-      adjacentTiles.add(index);
-      adjacentTiles.add(nextRow);
-    }
-    return adjacentTiles;
+  void swapTiles(int index) {
+    Widget tempValue;
+    setState(() {
+      if (_ChangeIndex(index)) {
+        tempValue = _items![EmptySpot];
+
+        _items![EmptySpot] = _items![index];
+
+        _items![index] = tempValue;
+        EmptySpot = index;
+      }
+    });
   }
 }

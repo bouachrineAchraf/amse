@@ -54,24 +54,24 @@ List exos = [
       buildFunc: (context) => exo5.DisplayImageWidget()),
   Exo(
       title: 'Exercice 5b',
-      subtitle: 'Génération du plateau de tuiles',
+      subtitle: 'Cropped Image into Parts',
       buildFunc: (context) => exo5b.DisplayImageWidget()),
 Exo(
       title: 'Exercice 5c',
-      subtitle: 'Génération du plateau de tuiles',
+      subtitle: 'Crop Image With a slider',
       buildFunc: (context) => exo5c.DisplayImageWidget()),
   Exo(
       title: 'Exercice 6',
-      subtitle: 'Génération du plateau de tuiles',
+      subtitle: 'Swip Tiles',
       buildFunc: (context) => exo6.PositionedTiles()),
   Exo(
       title: 'Exercice 6b',
-      subtitle: 'Génération du plateau de tuiles',
-      buildFunc: (context) => exo6b.MyGridView()),
+      subtitle: 'Moving Tiles In Grid',
+      buildFunc: (context) => exo6b.DisplayGridView()),
   Exo(
       title: 'Exercice 7',
-      subtitle: 'Génération du plateau de tuiles',
-      buildFunc: (context) => exo7.MyGridView()),
+      subtitle: 'Image Tiles In Grid',
+      buildFunc: (context) => exo7.DisplayGridView()),
 ];
 
 class MenuPage extends StatelessWidget {
